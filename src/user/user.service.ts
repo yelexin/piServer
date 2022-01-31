@@ -9,7 +9,7 @@ export class UserService {
     const user = await this.userProvider.findByGithubId(githubId);
     return user;
   }
-  async findById(id: string) {
+  async findById(id: number) {
     const user = await this.userProvider.findById(id);
     return user;
   }

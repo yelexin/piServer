@@ -31,11 +31,17 @@ export class V2rayProvider {
     return servers;
   }
 
+  @camelCase
   async findById(id: number) {
     const server: V2rayServerEntity = await this.db.get(
       'select * from v2ray_servers where id = ?;',
       id,
     );
     return server;
+  }
+
+  async deleteAll() {
+    const res = await this.db.run('delete from v2ray_servers;');
+    return res;
   }
 }

@@ -16,7 +16,7 @@ export class UserProvider {
     }
     return res;
   }
-  async findById(id: string): Promise<UserEntity> {
+  async findById(id: number): Promise<UserEntity> {
     const res = await this.db.get('select * from users where id = ?;', id);
     if (!res) {
       throw new Error(`没有找到 id 为 ${id} 的用户`);

@@ -73,7 +73,8 @@ export class V2rayService {
     vmessUris.forEach((item) => {
       rawJsons.push(this.decodeVmessUri(item));
     });
-    
+    // 删除所有旧的 servers
+    await this.v2rayProvider.deleteAll()
     for (let i = 0; i < v2rayJsons.length; i++) {
       await this.v2rayProvider.insert({
         v2rayConfigJson: JSON.stringify(v2rayJsons[i]),

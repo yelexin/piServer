@@ -30,7 +30,7 @@ export class V2rayController {
   }
 
   @Post('/updateSubscription')
-  // todo 鉴权
+  @UseGuards(AuthGuard)
   async updateV2raySubscription() {
     await this.v2rayService.updateV2raySubscription();
     return {
@@ -40,8 +40,7 @@ export class V2rayController {
   }
 
   @Get('/servers')
-  // todo 鉴权
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async getServers() {
     const servers = await this.v2rayService.getServers();
     return {
@@ -52,7 +51,6 @@ export class V2rayController {
   }
 
   @Post('/enableServer')
-  // todo 鉴权
   // todo Validation Pipe
   @UseGuards(AuthGuard)
   async enableServer(@Body('id') id: number) {
