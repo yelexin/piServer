@@ -1,0 +1,11 @@
+---
+serverOrigin: http://localhost:3000
+v2rayExecPath: /usr/local/bin/v2ray
+v2rayConfigPath: /usr/local/etc/v2ray/config.json
+subscriptionUrl:
+githubClientId:
+githubClientSecret:
+# github 可能被墙了，影响登录，配了就走代理
+httpProxy:
+  host: "127.0.0.1"
+  port: 1087

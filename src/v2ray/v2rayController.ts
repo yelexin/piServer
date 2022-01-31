@@ -1,10 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { V2rayService } from './v2rayService';
 import * as fs from 'fs';
-import * as path from 'path';
-import { VmessBody } from './interfaces';
 import { config } from '../configs/config';
-import { exec, execSync } from 'child_process';
+import { execSync } from 'child_process';
 
 @Controller('/api/v1/v2ray')
 export class V2rayController {
@@ -31,6 +29,7 @@ export class V2rayController {
   }
 
   @Post('/updateSubscription')
+  // todo 鉴权
   async updateV2raySubscription() {
     await this.v2rayService.updateV2raySubscription();
     return {
@@ -40,25 +39,9 @@ export class V2rayController {
   }
 
   @Get('/servers')
+  // todo 鉴权
   async getServers() {
-    const dirs = fs.readdirSync('v2rayConfigJsons');
-    dirs.sort();
-    const newest = dirs[dirs.length - 1];
-    const configs = fs.readdirSync(path.resolve('v2rayConfigJsons', newest));
-    const rawConfigs = configs.filter((v) => v.includes('raw'));
-    const servers = [];
-    for (let i = 0; i < rawConfigs.length; i++) {
-      const rawConfigTxt = fs.readFileSync(
-        path.resolve('v2rayConfigJsons', newest, rawConfigs[i]),
-        'utf-8',
-      );
-      const rawConfigJson: VmessBody = JSON.parse(rawConfigTxt);
-      servers.push({
-        id: i,
-        remark: rawConfigJson.ps,
-        host: rawConfigJson.host,
-      });
-    }
+    const servers = await this.v2rayService.getServers();
     return {
       code: 200,
       message: '获取服务器成功',
@@ -67,18 +50,16 @@ export class V2rayController {
   }
 
   @Post('/enableServer')
+  // todo 鉴权
+  // todo Validation Pipe
   async enableServer(@Body('id') id: number) {
     if(!id) {
       throw new Error('未指定 id')
     }
-    const dirs = fs.readdirSync('v2rayConfigJsons');
-    dirs.sort();
-    const newest = dirs[dirs.length - 1];
-    const configTxt = fs.readFileSync(
-      path.resolve('v2rayConfigJsons', newest, `config_${id}.json`),
-      'utf-8',
-    );
-    fs.writeFileSync(config.v2rayConfigPath, configTxt);
+    const serverConfigText = await this.v2rayService.findConfigTextById(id);
+    // 替换 v2ray 的 config.json
+    fs.writeFileSync(config.v2rayConfigPath, serverConfigText);
+    // 重启 v2ray
     execSync('sudo systemctl restart v2ray');
     return {
       code: 200,

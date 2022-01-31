@@ -2,18 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { VmessBody } from './interfaces';
 import { IV2Ray } from '../../types/v2ray';
 import { VmessV2rayConfigConverter } from './VmessV2rayConfigConverter';
-import * as moment from 'moment';
-import * as path from 'path';
 import { lastValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { config } from '../configs/config';
-import * as fs from 'fs';
+import { V2rayProvider } from './v2rayProvider';
 
 @Injectable()
 export class V2rayService {
   private readonly V2RAY_SUBSCRIPTION_URL = config.subscriptionUrl;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly v2rayProvider: V2rayProvider,
+  ) {}
   decodeVmessUri(vmessUri: string): VmessBody {
     if (!vmessUri.startsWith('vmess://')) {
       throw new Error('该 URI scheme 不是 vmess');
@@ -43,6 +44,14 @@ export class V2rayService {
     const v2rayConfig: IV2Ray = converter.convert();
     return v2rayConfig;
   }
+  async getServers() {
+    const servers = await this.v2rayProvider.findAll();
+    return servers;
+  }
+  async findConfigTextById(id: number) {
+    const server = await this.v2rayProvider.findById(id);
+    return server.v2rayConfigJson;
+  }
   async updateV2raySubscription() {
     // 获取订阅
     const resp = await lastValueFrom(
@@ -59,28 +68,19 @@ export class V2rayService {
     const v2rayJsons = vmessUris.map((item) => {
       return this.vmessUri2V2rayJsonConfig(item);
     });
-
-    const rawJsons = [];
+    // 直接解析 vmess uri 得到的 JSON
+    const rawJsons: VmessBody[] = [];
     vmessUris.forEach((item) => {
       rawJsons.push(this.decodeVmessUri(item));
     });
-    // 建立当前日期文件夹并写入所有的 config.json
-    const dirName = moment().format('YYYYMMDD-HHmmss');
-    if (!fs.existsSync(path.resolve('v2rayConfigJsons', dirName))) {
-      fs.mkdirSync(path.resolve('v2rayConfigJsons', dirName), {
-        recursive: true,
-      });
-    }
+    
     for (let i = 0; i < v2rayJsons.length; i++) {
-
-      fs.writeFileSync(
-        path.resolve('v2rayConfigJsons', dirName, `config_${i}.json`),
-        JSON.stringify(v2rayJsons[i]),
-      );
-      fs.writeFileSync(
-        path.resolve('v2rayConfigJsons', dirName, `raw_${i}.json`),
-        JSON.stringify(rawJsons[i]),
-      );
+      await this.v2rayProvider.insert({
+        v2rayConfigJson: JSON.stringify(v2rayJsons[i]),
+        vmessUri: vmessUris[i],
+        vmessUriRawJson: JSON.stringify(rawJsons[i]),
+        serverName: rawJsons[i].ps
+      })
     }
   }
 }

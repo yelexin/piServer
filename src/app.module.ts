@@ -13,6 +13,7 @@ import { UserService } from './user/user.service';
 import { openDb } from './sqlite/db';
 import { UserProvider } from './user/user.provider';
 import { LogoutController } from './login/logout.controller';
+import { V2rayProvider } from './v2ray/v2rayProvider';
 
 @Module({
   imports: [ScheduleModule.forRoot(), HttpModule],
@@ -21,7 +22,7 @@ import { LogoutController } from './login/logout.controller';
     V2rayController,
     LoginController,
     UserController,
-    LogoutController
+    LogoutController,
   ],
   providers: [
     AppService,
@@ -33,7 +34,8 @@ import { LogoutController } from './login/logout.controller';
       provide: 'DATABASE',
       useValue: openDb(),
     },
-    UserProvider
+    UserProvider,
+    V2rayProvider,
   ],
 })
 export class AppModule {}

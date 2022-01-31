@@ -1,6 +1,3 @@
-import { VmessBody } from 'src/v2ray/interfaces';
-import { IV2Ray } from 'types/v2ray';
-
 export interface UserEntity {
   id: number;
   github_id: string;
@@ -11,8 +8,8 @@ export interface UserEntity {
 
 export interface V2rayServerEntity {
   id: number;
-  v2rayConfigJson: IV2Ray;
+  v2rayConfigJson: string;
   vmessUri: string;
-  vmessUriRawJson: VmessBody;
+  vmessUriRawJson: string;
   serverName: string;
 }
