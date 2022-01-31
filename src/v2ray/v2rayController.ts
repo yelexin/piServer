@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { V2rayService } from './v2rayService';
 import * as fs from 'fs';
 import { config } from '../configs/config';
 import { execSync } from 'child_process';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
 @Controller('/api/v1/v2ray')
 export class V2rayController {
@@ -40,6 +41,7 @@ export class V2rayController {
 
   @Get('/servers')
   // todo 鉴权
+  // @UseGuards(AuthGuard)
   async getServers() {
     const servers = await this.v2rayService.getServers();
     return {
@@ -52,6 +54,7 @@ export class V2rayController {
   @Post('/enableServer')
   // todo 鉴权
   // todo Validation Pipe
+  @UseGuards(AuthGuard)
   async enableServer(@Body('id') id: number) {
     if(!id) {
       throw new Error('未指定 id')

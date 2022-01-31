@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Database } from '../sqlite/db';
 import { V2rayServerEntity } from '../sqlite/interfaces';
+import { camelCase } from '../common/decorators/camelCase';
+import { autoParse } from 'src/common/decorators/autoParse';
 
 @Injectable()
 export class V2rayProvider {
@@ -19,12 +21,16 @@ export class V2rayProvider {
     );
     return result;
   }
+
+  @autoParse
+  @camelCase
   async findAll() {
-    const servers: V2rayServerEntity[] = await this.db.all(
+    let servers: V2rayServerEntity[] = await this.db.all(
       'select * from v2ray_servers;',
     );
     return servers;
   }
+
   async findById(id: number) {
     const server: V2rayServerEntity = await this.db.get(
       'select * from v2ray_servers where id = ?;',
