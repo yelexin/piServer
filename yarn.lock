@@ -776,6 +776,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/connect-sqlite3@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.npmmirror.com/@types/connect-sqlite3/-/connect-sqlite3-0.9.0.tgz#aa320bcda3e123f09c4f511d0b0db7e61854c2f6"
+  integrity sha512-HxScte5qTKHDRhXBqLLD59hfc9LkAwbJ0ym5KpwvUeWYZLwNE0O90ZATBqJ2HrA7dDaNHw0RZGkkvwREzW8WTg==
+  dependencies:
+    "@types/express" "*"
+
 "@types/connect@*":
   version "3.4.35"
   resolved "https://registry.npmmirror.com/@types/connect/download/@types/connect-3.4.35.tgz#5fcf6ae445e4021d1fc2219a4873cc73a3bb2ad1"
@@ -1874,6 +1881,13 @@ concat-stream@^1.5.2:
     inherits "^2.0.3"
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
+
+connect-sqlite3@^0.9.13:
+  version "0.9.13"
+  resolved "https://registry.npmmirror.com/connect-sqlite3/-/connect-sqlite3-0.9.13.tgz#d6b1264afc26f5996a219217aecb740a2a57641e"
+  integrity sha512-4Dif7wjNutcAsvvl85nqApIa3gViEnN6lKOcEBEtuL9JB1DIq1bREcq0pQCc1oCpSvDGpjsFs0doftzGFc4cmQ==
+  dependencies:
+    sqlite3 "^5.0.2"
 
 consola@^2.15.0:
   version "2.15.3"

@@ -17,6 +17,7 @@ interface IConfig {
     host: string;
     port: number;
   };
+  sessionSecret: string;
 }
 
 export const config: IConfig = yaml.parse(yamlConfig);
