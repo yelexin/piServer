@@ -27,13 +27,11 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    # - run: npm install
-    # - run: npm run build:prod --if-present
-    # - run: tar zcvf src.tar.gz ./dist/src
-    - run: echo $GITHUB_ENV
+    - run: npm install
+    - run: npm run build:prod --if-present
+    - run: tar zcvf src.tar.gz ./dist/src
     - run: echo TMP_FILE=`mktemp` >> $GITHUB_ENV
     - run: echo $PI_SSH_KEY > ${{ env.TMP_FILE }}
-    - run: cat ${{ env.TMP_FILE }}
-    # - run: "scp -P 10010 -i $TMP_FILE src.tar.gz pi@pi.yelexin.cn:~/apps/piServer"
-    # - run: "scp -P 10010 -i $TMP_FILE package.json pi@pi.yelexin.cn:~/apps/piServer/dist"
-    # - run: ssh -p 10010 -i $TMP_FILE -f pi@pi.yelexin.cn "rm -rf ~/apps/piServer/dist/src && tar -C ~/apps/piServer/dist xf ~/apps/piServer/src.tar.gz && cd ~/apps/piServer/dist && npm install --only=prod && pm2 restart piServer"
+    - run: "scp -P 10010 -i $TMP_FILE src.tar.gz pi@pi.yelexin.cn:~/apps/piServer"
+    - run: "scp -P 10010 -i $TMP_FILE package.json pi@pi.yelexin.cn:~/apps/piServer/dist"
+    - run: ssh -p 10010 -i $TMP_FILE -f pi@pi.yelexin.cn "rm -rf ~/apps/piServer/dist/src && tar -C ~/apps/piServer/dist xf ~/apps/piServer/src.tar.gz && cd ~/apps/piServer/dist && npm install --only=prod && pm2 restart piServer"
