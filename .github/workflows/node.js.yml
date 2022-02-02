@@ -30,8 +30,14 @@ jobs:
     - run: npm install
     - run: npm run build:prod --if-present
     - run: tar zcvf src.tar.gz ./dist/src
-    - run: echo TMP_FILE=`mktemp` >> $GITHUB_ENV
-    - run: echo $PI_SSH_KEY > ${{ env.TMP_FILE }} && chmod 600 ${{ env.TMP_FILE }}
-    - run: "scp -P 10010 -i ${{ env.TMP_FILE }} src.tar.gz pi@pi.yelexin.cn:~/apps/piServer"
-    - run: "scp -P 10010 -i ${{ env.TMP_FILE }} package.json pi@pi.yelexin.cn:~/apps/piServer/dist"
-    - run: ssh -p 10010 -i ${{ env.TMP_FILE }} -f pi@pi.yelexin.cn "rm -rf ~/apps/piServer/dist/src && tar -C ~/apps/piServer/dist xf ~/apps/piServer/src.tar.gz && cd ~/apps/piServer/dist && npm install --only=prod && pm2 restart piServer"
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.PI_SSH_KEY }}
+        name: pi # optional
+        known_hosts: ${{ secrets.PI_SSH_KNOWN_HOST }}
+        config: ${{ secrets.PI_SSH_CONFIG }} # ssh_config; optional
+        if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+    - run: "scp -P 10010 src.tar.gz pi:~/apps/piServer"
+    - run: "scp -P 10010 package.json pi:~/apps/piServer/dist"
+    - run: ssh -p 10010 -f pi "rm -rf ~/apps/piServer/dist/src && tar -C ~/apps/piServer/dist xf ~/apps/piServer/src.tar.gz && cd ~/apps/piServer/dist && npm install --only=prod && pm2 restart piServer"
