@@ -35,15 +35,13 @@ jobs:
           setup: |
             mkdir -p "${PWD}/artifacts"
           dockerRunArgs: |
-            --volume "${PWD}/artifacts:/artifacts"
+            --volume "${PWD}/artifacts:/artifacts" --volume "${PWD}":/repo
           install: |
-            apt update -q -y
-            apt install -q -y git
             curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+            apt update -q -y
             apt-get install -y nodejs
           run: |
-            git clone https://github.com/yelexin/piServer.git
-            cd piServer
+            cd /repo
             npm install
             npm run build:prod --if-present
             cp ./package.json ./dist
