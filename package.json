@@ -4,7 +4,7 @@
   "description": "",
   "author": "yelexin",
   "private": true,
-  "license": "GPL",
+  "license": "GPLv3",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
