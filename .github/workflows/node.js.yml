@@ -27,6 +27,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: npm install
     - run: npm run build:prod --if-present
     - run: tar zcvf src.tar.gz ./dist/src
     - run: TMP_FILE=`mktemp`
