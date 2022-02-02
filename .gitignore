@@ -36,3 +36,4 @@ lerna-debug.log*
 config.yaml
 v2rayConfigJsons
 sqliteDB
+yarn.lock
