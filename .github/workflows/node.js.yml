@@ -5,13 +5,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -21,23 +20,44 @@ jobs:
     env:
       PI_SSH_KEY: ${{ secrets.PI_SSH_KEY }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install
-    - run: npm run build:prod --if-present
-    - run: tar zcvf src.tar.gz ./dist/src
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
-      with:
-        key: ${{ secrets.PI_SSH_KEY }}
-        name: pi # optional
-        known_hosts: ${{ secrets.PI_SSH_KNOWN_HOST }}
-        config: ${{ secrets.PI_SSH_CONFIG }} # ssh_config; optional
-        if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-    - run: "scp -P 10010 src.tar.gz pi:~/apps/piServer"
-    - run: "scp -P 10010 package.json pi:~/apps/piServer/dist"
-    - run: ssh -p 10010 pi "rm -rf ~/apps/piServer/dist/src && cd ~/apps/piServer && tar -zxvf src.tar.gz && rm -rf src.tar.gz && cd dist && npm install --only=prod && pm2 restart piServer"
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - uses: uraimo/run-on-arch-action@v2
+        name: Build artifact
+        id: build
+        with:
+          arch: armv7
+          distro: bullseye
+          setup: |
+            mkdir -p "${PWD}/artifacts"
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          install: |
+            apt update -q -y
+            apt install -q -y git
+            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+            apt-get install -y nodejs
+          run: |
+            git clone https://github.com/yelexin/piServer.git
+            cd piServer
+            npm install
+            npm run build:prod --if-present
+            cp ./package.json ./dist
+            cp -r ./dist /artifacts/
+            echo "Produced artifact at /artifacts/node_modules"
+      - run: tar zcvf dist.tar.gz ${PWD}/artifacts/dist
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PI_SSH_KEY }}
+          name: pi # optional
+          known_hosts: ${{ secrets.PI_SSH_KNOWN_HOST }}
+          config: ${{ secrets.PI_SSH_CONFIG }} # ssh_config; optional
+          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+      - run: "scp -P 10010 dist.tar.gz pi:~/apps/piServer"
+      # - run: "scp -P 10010 package.json pi:~/apps/piServer/dist"
+      - run: ssh -p 10010 pi "rm -rf ~/apps/piServer/dist && cd ~/apps/piServer && tar -zxvf dist.tar.gz && rm -rf dist.tar.gz && pm2 restart piServer"
