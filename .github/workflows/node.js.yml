@@ -47,9 +47,10 @@ jobs:
             npm install > /dev/null
             npm run build:prod --if-present
             cp ./package.json ./dist
+            cp -r ./node_modules ./dist
             cp -r ./dist /artifacts/
             echo "Produced artifact at /artifacts/dist"
-      - run: tar zcvf dist.tar.gz ${PWD}/artifacts/dist
+      - run: tar zcvf dist.tar.gz -C ${PWD}/artifacts/ dist
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
