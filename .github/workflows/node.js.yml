@@ -40,7 +40,7 @@ jobs:
           install: |
             curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
             apt update -q -y
-            apt-get install -y nodejs npm
+            apt-get install -q -y nodejs npm
           run: |
             node -v
             npm -v
