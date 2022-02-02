@@ -17,7 +17,14 @@ interface IConfig {
     host: string;
     port: number;
   };
-  sessionSecret: string;
+  session: {
+    secret: string;
+    dbPath: string;
+  }
+  // sqlite 数据库文件地址
+  db: {
+    path: string;
+  };
 }
 
 export const config: IConfig = yaml.parse(yamlConfig);

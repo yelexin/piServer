@@ -9,12 +9,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(
     session({
-      secret: config.sessionSecret,
+      secret: config.session.secret,
       resave: false,
       saveUninitialized: false,
       store: new SQLiteStore({
-        dir: 'sqliteDB',
-        db: 'sessions.db'
+        db: config.session.dbPath
       }),
     }),
   );
