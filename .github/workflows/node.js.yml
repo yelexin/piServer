@@ -40,4 +40,4 @@ jobs:
         if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
     - run: "scp -P 10010 src.tar.gz pi:~/apps/piServer"
     - run: "scp -P 10010 package.json pi:~/apps/piServer/dist"
-    - run: ssh -p 10010 -f pi "rm -rf ~/apps/piServer/dist/src && tar -C ~/apps/piServer/dist xf ~/apps/piServer/src.tar.gz && cd ~/apps/piServer/dist && npm install --only=prod && pm2 restart piServer"
+    - run: ssh -p 10010 -f pi "rm -rf ~/apps/piServer/dist/src && cd ~/apps/piServer && tar -zxvf src.tar.gz && cd dist && npm install --only=prod && pm2 restart piServer"
