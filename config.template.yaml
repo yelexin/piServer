@@ -5,7 +5,12 @@ v2rayConfigPath: /usr/local/etc/v2ray/config.json
 subscriptionUrl:
 githubClientId:
 githubClientSecret:
-# github 可能被墙了，影响登录，配了就走代理
+# github 可能被墙了，影响登录
 httpProxy:
   host: "127.0.0.1"
   port: 1087
+session:
+  secret:
+  dbPath:
+db: # sqlite 数据库文件地址
+  path:
