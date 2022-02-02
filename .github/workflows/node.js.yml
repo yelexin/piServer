@@ -44,6 +44,7 @@ jobs:
           run: |
             node -v
             npm -v
+            cd /repo
             npm install
             npm run build:prod --if-present
             cp ./package.json ./dist
