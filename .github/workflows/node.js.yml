@@ -38,14 +38,13 @@ jobs:
           dockerRunArgs: |
             --volume "${PWD}/artifacts:/artifacts" --volume "${PWD}":/repo
           install: |
-            curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+            curl -fsSL https://deb.nodesource.com/setup_16.x | bash - > /dev/null 2>&1
             apt update -q -y
             apt-get install -q -y nodejs npm
           run: |
-            node -v
-            npm -v
+            ln -s /usr/bin/python3 /usr/bin/python
             cd /repo
-            npm install
+            npm install > /dev/null
             npm run build:prod --if-present
             cp ./package.json ./dist
             cp -r ./dist /artifacts/
