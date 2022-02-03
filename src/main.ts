@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import { connectSqlite3 } from './drivers/expressSessionSqlite3.js';
 import { config } from './configs/config';
+import * as path from 'path';
 const SQLiteStore = connectSqlite3(session);
 
 async function bootstrap() {
@@ -13,7 +14,8 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
       store: new SQLiteStore({
-        db: config.session.dbPath
+        db: path.dirname(config.session.dbPath),
+        dir: path.basename(config.session.dbPath),
       }),
     }),
   );
