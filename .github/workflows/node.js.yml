@@ -40,4 +40,4 @@ jobs:
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
       - run: "scp -P 10010 dist.tar.gz pi:~/apps/piServer"
       # - run: "scp -P 10010 package.json pi:~/apps/piServer/dist"
-      - run: ssh -p 10010 pi "rm -rf ~/apps/piServer/dist && cd ~/apps/piServer && tar -zxvf dist.tar.gz && rm -rf dist.tar.gz && pm2 restart piServer"
+      - run: ssh -p 10010 pi "rm -rf ~/apps/piServer/dist && cd ~/apps/piServer && tar -zxvf dist.tar.gz && rm -rf dist.tar.gz && npm install --registry=https://registry.npm.taobao.org && pm2 restart piServer"
