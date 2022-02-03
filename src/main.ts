@@ -14,8 +14,8 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
       store: new SQLiteStore({
-        db: path.dirname(config.session.dbPath),
-        dir: path.basename(config.session.dbPath),
+        dir: path.dirname(config.session.dbPath),
+        db: path.basename(config.session.dbPath),
       }),
     }),
   );
