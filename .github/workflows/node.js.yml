@@ -21,36 +21,15 @@ jobs:
       PI_SSH_KEY: ${{ secrets.PI_SSH_KEY }}
     steps:
       - uses: actions/checkout@v2
-      # - name: Use Node.js ${{ matrix.node-version }}
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: ${{ matrix.node-version }}
-      #     cache: "npm"
-      - uses: uraimo/run-on-arch-action@v2.1.1
-        name: Build artifact
-        id: build
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
         with:
-          arch: armv7
-          distro: bullseye
-          githubToken: ${{ github.token }}
-          setup: |
-            mkdir -p "${PWD}/artifacts"
-          dockerRunArgs: |
-            --volume "${PWD}/artifacts:/artifacts" --volume "${PWD}":/repo
-          install: |
-            curl -fsSL https://deb.nodesource.com/setup_16.x | bash - > /dev/null 2>&1
-            apt update -q -y
-            apt-get install -q -y nodejs npm
-          run: |
-            ln -s /usr/bin/python3 /usr/bin/python
-            cd /repo
-            npm install --silent
-            npm run build:prod --if-present
-            cp ./package.json ./dist
-            cp -r ./node_modules ./dist
-            cp -r ./dist /artifacts/
-            echo "Produced artifact at /artifacts/dist"
-      - run: tar zcvf dist.tar.gz -C ${PWD}/artifacts/ dist
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: |
+          npm install
+          npm run build
+          tar zcvf dist.tar.gz dist
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
         with:
