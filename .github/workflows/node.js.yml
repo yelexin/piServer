@@ -44,7 +44,7 @@ jobs:
           run: |
             ln -s /usr/bin/python3 /usr/bin/python
             cd /repo
-            npm install > /dev/null
+            npm install --silent
             npm run build:prod --if-present
             cp ./package.json ./dist
             cp -r ./dist /artifacts/
