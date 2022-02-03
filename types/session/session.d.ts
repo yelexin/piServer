@@ -3,6 +3,7 @@ declare module 'express-session' {
     userId: number;
     interaction: {
       state: string;
+      returnTo: string;
     }
   }
 }

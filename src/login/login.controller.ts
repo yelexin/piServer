@@ -18,10 +18,15 @@ export class LoginController {
     private readonly userService: UserService,
   ) {}
   @Get('/github/init')
-  async initGithubLogin(@Req() req: Request, @Res() res: Response) {
+  async initGithubLogin(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query('returnTo') returnTo: string,
+  ) {
     const loginUrl = this.loginService.buildGithubLoginUrl();
     req.session.interaction = {
       state: loginUrl.searchParams.get('state'),
+      returnTo,
     };
     res.redirect(loginUrl.toString());
   }
@@ -40,7 +45,7 @@ export class LoginController {
     // find user by githubId
     const user = await this.userService.findByGithubId(userInfo.id.toString());
     req.session.userId = user.id;
-    res.redirect('/');
+    res.redirect(req.session.interaction.returnTo || '/');
   }
   @Get('/checkSession')
   async checkSession(@Req() req: Request) {
@@ -48,6 +53,9 @@ export class LoginController {
       return {
         code: 200,
         message: '已登录',
+        data: {
+          id: req.session.userId,
+        },
       };
     }
     throw new UnauthorizedException('未登录');

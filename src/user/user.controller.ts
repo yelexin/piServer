@@ -21,6 +21,6 @@ export class UserController {
       throw new UnauthorizedException('无权获取该用户信息');
     }
     const user = await this.userService.findById(Number(id));
-    return user;
+    return { code: 200, message: '获取用户成功', data: user };
   }
 }
