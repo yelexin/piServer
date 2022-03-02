@@ -10,7 +10,7 @@ export class UpdateV2raySubsriptionCronService {
 
   constructor(private readonly v2rayService: V2rayService) {}
   // 每月 1 号凌晨 2 点 15 分更新 v2ray 订阅
-  @Cron('* 2 15 1 * *')
+  @Cron('15 2 1 * *')
   // @Cron('50 * * * * *')
   async handleCron() {
     this.logger.debug(`从 ${this.V2RAY_SUBSCRIPTION_URL} 更新 v2ray 订阅`);
